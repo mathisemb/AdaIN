@@ -15,10 +15,17 @@ class StyleTransfer(nn.Module):
         self.decoder = Decoder()
 
     def forward(self, content, style):
-        x = self.encoder(x)
-        x = self.adain(x)
-        x = self.decoder(x)
-        return x
+        # Extract content and style features
+        content_features = self.encoder(content)
+        style_features = self.encoder(style)
+
+        # Perform AdaIN
+        stylized_features = self.adain(content_features, style_features)
+
+        # Decode the stylized features
+        stylized_img = self.decoder(stylized_features)
+
+        return stylized_img
 
 # training function
 def train_decoder(model, content_loader, style_loader, nb_epochs, learning_rate, lam):
@@ -46,15 +53,11 @@ def train_decoder(model, content_loader, style_loader, nb_epochs, learning_rate,
         model.encoder.encoder[layer_pos].register_forward_hook(get_activation(layer_pos))
     
     # training loop
-    for epoch in tqdm(range(nb_epochs)):
+    for epoch in tqdm(range(nb_epochs), desc="Epochs"):
         for content_label_batch, style_label_batch in zip(content_loader, style_loader):
             # we are just interested in the images, not their labels
             content_batch = content_label_batch[0]
             style_batch = style_label_batch[0]
-
-            print("In model train decoder-------------")
-            print("content_batch:", content_batch.shape)
-            print("style_batch:", style_batch.shape)
 
             # --- RUN THE MODEL ---
             # We first encode the content image and the style image
@@ -66,6 +69,7 @@ def train_decoder(model, content_loader, style_loader, nb_epochs, learning_rate,
             encoder_activations = {} # reinitialize activations
 
             stylized_features = model.adain(content_features, style_features)
+
             stylized_img = model.decoder(stylized_features)
 
             # We save output for the content loss and activations for the style loss
@@ -82,8 +86,12 @@ def train_decoder(model, content_loader, style_loader, nb_epochs, learning_rate,
             # Loss
             L = Lc + lam*Ls
 
+            #print("loss:", L)
+
             optimizer.zero_grad()
             L.backward()
             optimizer.step()
-    
+        
+            print("loss =", L.item())
+        
     return 0
