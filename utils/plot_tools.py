@@ -27,3 +27,13 @@ def plot_img(content, style, stylized):
 
     plt.show()
 
+def plot_losses(content_LOSS, style_LOSS):
+    loss_name_map = {0 : 'Content Loss', 1: 'Style Loss'}
+    for i, loss in enumerate([content_LOSS, style_LOSS]):
+        plt.plot(loss, label= loss_name_map[i])
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.title('Training Losses')
+    plt.legend()
+    plt.grid(True)
+    plt.show()

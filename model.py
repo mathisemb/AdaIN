@@ -25,7 +25,9 @@ class StyleTransfer(nn.Module):
         self.optimizer = torch.optim.Adam(self.decoder.parameters(), lr=self.lr)
         
         self.current_epoch = 0
-        self.LOSS = []
+        
+        self.content_LOSS = []
+        self.style_LOSS = []
 
         self.saving_path = saving_path
 
@@ -72,7 +74,8 @@ class StyleTransfer(nn.Module):
         # training loop
         tqdm_bar = tqdm(range(self.current_epoch, self.current_epoch + nb_epochs), desc="Epochs")
         for epoch in tqdm_bar :
-            loss_count = 0.
+            content_loss_count = 0.
+            style_loss_count = 0.
             for content_label_batch, style_label_batch in zip(content_loader, style_loader):
                 # We are just interested in the images, not their labels
                 content_batch = content_label_batch[0].to(device)
@@ -102,6 +105,7 @@ class StyleTransfer(nn.Module):
                 # Style loss
                 Ls = style_loss(style_activations, output_activations)
 
+                
                 # Loss
                 L = Lc + self.lam*Ls
 
@@ -111,13 +115,19 @@ class StyleTransfer(nn.Module):
                 L.backward()
                 self.optimizer.step()
 
-                loss_count += L.item()/len(content_batch)
+                content_loss_count += Lc.item()/len(content_batch)
+                style_loss_count += Ls.item()/len(content_batch)
 
             
-            tqdm_bar.set_description(f'Epoch : {epoch + 1} Loss : {loss_count:.4f}')
-            self.LOSS.append(loss_count)
+            tqdm_bar.set_description(f'Epoch : {epoch + 1} Content Loss : {content_loss_count:.3f} Style Loss : {style_loss_count:.3f}')
+            self.content_LOSS.append(content_loss_count)
+            self.style_LOSS.append(style_loss_count)
         
         self.current_epoch = self.current_epoch + nb_epochs
+
+    def update_lr(self, new_lr):
+        for param_group in self.optimizer.param_groups:
+            param_group['lr'] = new_lr
 
     def save(self): 
 
