@@ -7,12 +7,12 @@ class AdaptiveInstanceNorm(nn.Module):
 
     def forward(self, content_feat, style_feat):
         # Compute mean and std deviation of the content feature
-        content_mean = torch.mean(content_feat, dim=(2, 3), keepdim=True)
-        content_std = torch.std(content_feat, dim=(2, 3), keepdim=True)
+        content_mean = torch.mean(content_feat, dim=[2, 3], keepdim=True)
+        content_std = torch.std(content_feat, dim=[2, 3], keepdim=True)
 
         # Compute mean and std deviation of the style feature
-        style_mean = torch.mean(style_feat, dim=(2, 3), keepdim=True)
-        style_std = torch.std(style_feat, dim=(2, 3), keepdim=True)
+        style_mean = torch.mean(style_feat, dim=[2, 3], keepdim=True)
+        style_std = torch.std(style_feat, dim=[2, 3], keepdim=True)
 
         # Normalize the content feature with the style statistics
         normalized_feat = (content_feat - content_mean) / content_std
