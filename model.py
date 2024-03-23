@@ -26,8 +26,7 @@ class StyleTransfer(nn.Module):
         
         self.current_epoch = 0
         
-        self.content_LOSS = []
-        self.style_LOSS = []
+        self.LOSS = [[], []]
 
         self.saving_path = saving_path
 
@@ -120,8 +119,8 @@ class StyleTransfer(nn.Module):
 
             
             tqdm_bar.set_description(f'Epoch : {epoch + 1} Content Loss : {content_loss_count:.3f} Style Loss : {style_loss_count:.3f}')
-            self.content_LOSS.append(content_loss_count)
-            self.style_LOSS.append(style_loss_count)
+            self.LOSS[0].append(content_loss_count)
+            self.LOSS[1].append(style_loss_count)
         
         self.current_epoch = self.current_epoch + nb_epochs
 
