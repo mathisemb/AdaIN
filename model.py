@@ -9,12 +9,14 @@ from utils.loss import content_loss, style_loss
 
 import pickle
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 class StyleTransfer(nn.Module):
     def __init__(self, lr = 3e-4, lam = 2., saving_path: str = 'model_checkpoints/Adain/'):
         super(StyleTransfer, self).__init__()
-        self.encoder = Encoder()
-        self.adain = AdaptiveInstanceNorm()
-        self.decoder = Decoder()
+        self.encoder = Encoder().to(device)
+        self.adain = AdaptiveInstanceNorm().to(device)
+        self.decoder = Decoder().to(device)
 
         self.lr = lr
         self.lam = lam
@@ -45,7 +47,7 @@ class StyleTransfer(nn.Module):
 
         return stylized_img
     
-    # training function
+    # Training function
     def train_decoder(self, content_loader, style_loader, nb_epochs):
         """
         model: style transfer model containing an encoder, an adain and a decoder
@@ -73,8 +75,8 @@ class StyleTransfer(nn.Module):
             loss_count = 0.
             for content_label_batch, style_label_batch in zip(content_loader, style_loader):
                 # We are just interested in the images, not their labels
-                content_batch = content_label_batch[0]
-                style_batch = style_label_batch[0]
+                content_batch = content_label_batch[0].to(device)
+                style_batch = style_label_batch[0].to(device)
                 # --- RUN THE MODEL ---
                 # We first encode the content image and the style image
                 # During encoding, hooks are activated and fill encoder_activations.
@@ -137,7 +139,7 @@ class StyleTransfer(nn.Module):
         self.update_paths()
 
         # Load model parameters
-        self.decoder.load_state_dict(torch.load(self.decoder_path))
+        self.decoder.load_state_dict(torch.load(self.decoder_path, map_location=device))
         # Load optimizer state
         self.optimizer.load_state_dict(torch.load(self.optimizer_path))
         # Load loss history
