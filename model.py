@@ -1,11 +1,11 @@
 import torch
 import torch.nn as nn
 from encoder import Encoder
-from adain import AdaptiveInstanceNorm
+from utils.adain import AdaptiveInstanceNorm
 from decoder import Decoder
 from tqdm import tqdm
 from copy import deepcopy
-from loss import content_loss, style_loss
+from utils.loss import content_loss, style_loss
 
 import pickle
 
