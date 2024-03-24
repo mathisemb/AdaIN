@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-def plot_img(content, style, stylized):
+def plot_img(content, style, stylized, saving_path: str):
     plt.figure(figsize=(15, 5))
 
     # Display the content image
@@ -25,6 +25,8 @@ def plot_img(content, style, stylized):
     plt.title('Stylized Image')
     plt.axis('off')
 
+    plt.savefig(saving_path)
+    
     plt.show()
 
 def plot_losses(content_LOSS, style_LOSS):

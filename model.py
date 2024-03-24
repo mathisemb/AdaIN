@@ -103,7 +103,6 @@ class StyleTransfer(nn.Module):
 
                 # Style loss
                 Ls = style_loss(style_activations, output_activations)
-
                 
                 # Loss
                 L = Lc + self.lam*Ls

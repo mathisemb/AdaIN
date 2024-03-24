@@ -3,7 +3,7 @@ import torch.nn.functional as F
 
 # Define content loss (MSE loss)
 def content_loss(input, target):
-    return F.mse_loss(input, target, reduction='sum')
+    return F.mse_loss(input, target, reduction='mean')
 
 # Define style loss
 def style_loss(style_encoding_activation, output_encoding_activations):
@@ -23,8 +23,8 @@ def style_loss(style_encoding_activation, output_encoding_activations):
         style_std = torch.std(style_features, dim=[2, 3])
         
         # Compute L2 distance for mean and standard deviation
-        mean_loss = F.mse_loss(gen_mean, style_mean, reduction='sum')
-        std_loss = F.mse_loss(gen_std, style_std, reduction='sum')
+        mean_loss = F.mse_loss(gen_mean, style_mean, reduction='mean')
+        std_loss = F.mse_loss(gen_std, style_std, reduction='mean')
 
         # Accumulate the loss
         loss += mean_loss + std_loss
