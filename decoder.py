@@ -40,10 +40,8 @@ class Decoder(nn.Module):
 
     #def forward(self, x):
     #    return self.decoder(x)
-    def forward(self, x):
-        t = self.decoder(x)
-        print(f"t = {t.shape}")
-        return t
+    def forward(self, x):   
+        return self.decoder(x)
     
 class DecoderOLD(nn.Module):
     def __init__(self):
