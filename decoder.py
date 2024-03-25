@@ -16,6 +16,7 @@ class Decoder(nn.Module):
         nn.ReflectionPad2d((1, 1, 1, 1)),
         nn.Conv2d(256, 256, (3, 3)),
         nn.ReLU(),
+        nn.Upsample(scale_factor=2, mode='nearest'),
         nn.ReflectionPad2d((1, 1, 1, 1)),
         nn.Conv2d(256, 256, (3, 3)),
         nn.ReLU(),
@@ -40,7 +41,9 @@ class Decoder(nn.Module):
     #def forward(self, x):
     #    return self.decoder(x)
     def forward(self, x):
-        return self.decoder(x)
+        t = self.decoder(x)
+        print(f"t = {t.shape}")
+        return t
     
 class DecoderOLD(nn.Module):
     def __init__(self):
