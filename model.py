@@ -66,7 +66,7 @@ class StyleTransfer(nn.Module):
                 encoder_activations[str(layer_num)] = output.clone().detach()
                 # print('activation_hook -> layer_num: {}'.format(layer_num))
             return hook
-        enc_style_layers = [3, 11, 20, 29] # vgg19 relu1_1, relu2_1, relu3_1, relu4_1
+        enc_style_layers = [1, 6, 11, 20] # vgg19 relu1_1, relu2_1, relu3_1, relu4_1
         for layer_pos in enc_style_layers:
             self.encoder.encoder[layer_pos].register_forward_hook(get_activation(layer_pos))
         
@@ -113,8 +113,8 @@ class StyleTransfer(nn.Module):
                 L.backward()
                 self.optimizer.step()
 
-                content_loss_count += Lc.item()/len(content_batch)
-                style_loss_count += Ls.item()/len(content_batch)
+                content_loss_count += Lc.item()
+                style_loss_count += Ls.item()
 
             
             tqdm_bar.set_description(f'Epoch : {epoch + 1} Content Loss : {content_loss_count:.3f} Style Loss : {style_loss_count:.3f}')
