@@ -10,7 +10,7 @@ class Encoder(nn.Module):
     def __init__(self):
         super(Encoder, self).__init__()
         vgg = torch.hub.load('pytorch/vision:v0.9.0', 'vgg19', pretrained=True)
-        vgg = nn.Sequential(*list(vgg.features.children())[:31]) # 31 because we take layers up to Relu 4_1
+        vgg = nn.Sequential(*list(vgg.features.children())[:30]) # 30 because we take layers up to Relu 4_1
         self.encoder = vgg
 
     def forward(self, x):
